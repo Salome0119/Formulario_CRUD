@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Supabase - Edilfredo 2</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 350px;
+        }
+        h2 { color: #3ecf8e; text-align: center; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: bold; color: #333; }
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+        input:focus { border-color: #3ecf8e; }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3ecf8e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #34b27b; }
+        button:disabled { background-color: #ccc; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Registro</h2>
+        <form id="registroForm">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" placeholder="Ej. Salomé" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="correo@ejemplo.com" required>
+            </div>
+            <button type="submit" id="btnEnviar">Guardar en la Nube</button>
+        </form>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE TU PROYECTO
+        const SUPABASE_URL = 'https://ftvhjofrrwcybsmqofte.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_ku0oJCBrv1OqsVzlRPbLeg_8qNc2rKi';
+        
+        // Inicializar cliente
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const form = document.getElementById('registroForm');
+        const btn = document.getElementById('btnEnviar');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            btn.innerText = 'Conectando...';
+            btn.disabled = true;
+
+            const nombreVal = document.getElementById('nombre').value;
+            const emailVal = document.getElementById('email').value;
+
+            // INSERTAR EN LA TABLA
+            const { data, error } = await _supabase
+                .from('usuarios') // Asegúrate de que tu tabla se llame así
+                .insert([{ nombre: nombreVal, email: emailVal }]);
+
+            if (error) {
+                alert('Error al guardar: ' + error.message);
+                console.error(error);
+            } else {
+                alert('¡Datos enviados a Supabase con éxito!');
+                form.reset();
+            }
+
+            btn.innerText = 'Guardar en la Nube';
+            btn.disabled = false;
+        });
+    </script>
+</body>
+</html>
